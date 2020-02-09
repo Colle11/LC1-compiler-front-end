@@ -1,0 +1,21 @@
+var
+    i : char := 'k' ;
+    k : real ;
+end var
+
+routines
+    g (valres x : int, y : real) -> (s : string) is
+        do
+    end g
+
+    main () -> () is
+        var
+            j : int := 5;
+            w : string;
+        end var
+        do
+            k := 3.14;
+            s := g(j,k);
+    end main
+
+end routines

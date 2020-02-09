@@ -1,0 +1,23 @@
+const
+	x : int := 1 ;
+	y : string := "blu" ;
+end const
+
+var
+	z : Pt <real> ;
+	a : Array < char > (10) ;
+end var
+
+routines
+	main () -> () is
+		var
+			w : real ;
+		end var
+		do
+			w := 10.7 ;
+			z := &$w;
+			writeReal($z);
+			a[1] := readString();
+	end main
+
+end routines

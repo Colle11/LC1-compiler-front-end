@@ -1,0 +1,156 @@
+comment "--" ;
+
+entrypoints Program ;
+
+Prog.           Program ::= ConstDecls VarDecls FunDecls ;
+
+ConstEmpty.     ConstDecls ::= {- empty -} ;
+ConstBlk.       ConstDecls ::= "const" [ConstDecl] "end" "const" ;
+separator ConstDecl "" ;
+ConstD.         ConstDecl ::= PIdent ":" Type ":=" RExpr ";" ;
+
+VarEmpty.       VarDecls ::= {- empty -} ;
+VarBlk.         VarDecls ::= "var" [VarDecl] "end" "var" ;
+separator VarDecl "" ;
+VarD.           VarDecl ::= PIdent ":" Type MaybeInit ";" ;
+
+NoInit.         MaybeInit ::= {- empty -} ;
+JustInit.       MaybeInit ::= ":=" RExpr ;
+
+FunBlkEmpty.    FunDecls ::= {- empty -} ;
+FunBlk.         FunDecls ::= "routines" [FunDecl] "end" "routines" ;
+separator FunDecl "" ;
+FunD.           FunDecl ::= PIdent MaybeParamsIn MaybeParamsOut "is" FBody "end" "function";
+
+NoParamsIn.     MaybeParamsIn ::= {- empty -} ;
+JustParamsIn.   MaybeParamsIn ::= "(" [ParamIn] ")" ;
+separator ParamIn "," ;
+
+ParamIn.        ParamIn ::= Modality PIdent ":" Type ;
+
+ValMod.         Modality ::= {- empty -} ;
+ValResMod.      Modality ::= "valres" ;
+ValConst.       Modality ::= "const" ;
+
+NoParamsOut.    MaybeParamsOut ::= {- empty -} ;
+JustParamsOut.  MaybeParamsOut ::= "->" "(" [ParamOut] ")" ;
+separator ParamOut "," ;
+
+ParamOut.       ParamOut ::= PIdent ":" Type ;
+
+FunBody.        FBody ::= ConstDecls VarDecls FunDecls "do" [Stmt] ;
+
+-- Statemetns
+separator Stmt "" ;
+
+StmFCall.       Stmt ::= FunCall ";" ;
+Break.          Stmt ::= PBreak ";" ;
+Continue.       Stmt ::= PContinue ";" ;
+GoTo.           Stmt ::= "goto" PIdent ";" ;
+Label.          Stmt ::= "label" PIdent ":" ;
+While.          Stmt ::= "while" "(" RExpr ")" "do" [Stmt] "end" "while" ;
+DoWhile.        Stmt ::= "do" [Stmt] "while" "(" RExpr ")" ;
+For.            Stmt ::= "for" "(" ForAss "," RExpr "," ForAss ")" "do" [Stmt] "end" "for" ;--Stmt must be an assignment
+
+If.             Stmt ::= "if" "(" RExpr ")" "then" [Stmt] MaybeElseIf MaybeElse "end" "if" ;
+NoElseIf.       MaybeElseIf ::= {- empty -} ;
+ElseIf.         MaybeElseIf ::= "elseif" "(" RExpr ")" "then" [Stmt] MaybeElseIf ;
+NoElse.         MaybeElse ::= {- empty -} ;
+Else.           MaybeElse ::= "else" [Stmt] ;
+
+ForAssgn.       ForAss ::= LExpr Ass_Op RExpr ;
+
+Assgn.          Stmt ::= LExpr Ass_Op RExpr ";" ;
+
+Assign.         Ass_Op ::= ":=" ;
+AssignMul.      Ass_Op ::= "*:=" ;
+AssignAdd.      Ass_Op ::= "+:=" ;
+AssignDiv.      Ass_Op ::= "/:=" ;
+AssignSub.      Ass_Op ::= "-:=" ;
+AssignPow.      Ass_Op ::= "^:=" ;
+AssingAnd.      Ass_Op ::= "&:=" ;
+AssingOr.       Ass_Op ::= "|:=" ;
+
+TArr.           Type ::= "Array" "<" Type ">" "(" MaybeSize ")" ;
+ArrNoSize.      MaybeSize ::= {- empty -} ;
+ArrSize.        MaybeSize ::= RExpr ;
+TPt.            Type ::= "Pt" "<" Type ">" ;
+TBasic.         Type ::= BasicType ;
+
+TBool.          BasicType ::= "bool" ;
+TChar.          BasicType ::= "char" ;
+TString.        BasicType ::= "string" ;
+TReal.          BasicType ::= "real" ;
+TInt.           BasicType ::= "int" ;
+
+-- Expression
+coercions RExpr 8;
+separator RExpr "," ;
+
+Or.	       	    RExpr1 ::= RExpr1 "||" RExpr2 ;
+And.		        RExpr2 ::= RExpr2 "&&" RExpr3 ;
+
+Eq.	          	RExpr3 ::= RExpr3 "=" RExpr4 ;
+NEq.	          RExpr3 ::= RExpr3 "<>" RExpr4 ;
+
+Lt.		          RExpr4 ::= RExpr4 "<" RExpr5 ;
+LEq.	    	    RExpr4 ::= RExpr4 "<=" RExpr5 ;
+Gt.		          RExpr4 ::= RExpr4 ">" RExpr5 ;
+GEq.		        RExpr4 ::= RExpr4 ">=" RExpr5 ;
+
+Add.            RExpr5 ::= RExpr5 "+" RExpr6 ;
+Sub.            RExpr5 ::= RExpr5 "-" RExpr6 ;
+
+Mul.            RExpr6 ::= RExpr6 "*" RExpr7 ;
+Div.            RExpr6 ::= RExpr6 "/" RExpr7 ;
+Mod.            RExpr6 ::= RExpr6 "%" RExpr7 ;
+
+RexprCall.      RExpr7 ::= FunCall ;
+ArrayElems.     RExpr7 ::= "[" [RExpr] "]" ;
+AddrOf.         RExpr7 ::= "&" LExpr ;
+Not.            RExpr7 ::= "!" RExpr7 ;
+UnMin.          RExpr7 ::= "-" RExpr7 ;
+UnPlus.         RExpr7 ::= "+" RExpr7 ;
+
+Lexpr.          RExpr8 ::= LExpr ;
+Integer.        RExpr8 ::= PInteger ;
+Real.           RExpr8 ::= PReal ;
+Char.           RExpr8 ::= PChar ;
+String.         RExpr8 ::= PString ;
+Bool.           RExpr8 ::= PBool ;
+
+UserDefFCall.   FunCall ::= PIdent "(" [RExpr] ")" ;
+WIntCall.       FunCall ::= PWriteInt "(" RExpr ")" ;
+WFloatCall.     FunCall ::= PWriteFloat "(" RExpr ")" ;
+WCharCall.      FunCall ::= PWriteChar "(" RExpr ")" ;
+WStringCall.    FunCall ::= PWriteString "(" RExpr ")" ;
+RIntCall.       FunCall ::= PReadInt "(" ")" ;
+RFloatCall.     FunCall ::= PReadFloat "(" ")" ;
+RCharCall.      FunCall ::= PReadChar "(" ")" ;
+RStringCall.    FunCall ::= PReadString "(" ")" ;
+
+coercions LExpr 2 ;
+
+Deref.      LExpr ::= "$" LExpr1 ;
+ElemAt.     LExpr1 ::= LExpr1 "[" RExpr "]" ;
+Var.        LExpr2 ::= PIdent ;
+
+position token PIdent (letter (letter | digit | '_')*) ;
+position token PInteger (digit+) ;
+position token PReal (digit+ '.' digit+ ('e' '-'? digit+)?) ;
+position token PChar ('\'' ((char - ["'\\"]) | ('\\' ["'\\nt"])) '\'') ;
+position token PString ('"' ((char - ["\"\\"]) | ('\\' ["\"\\nt"]))* '"') ;
+position token PBool ({"true"} | {"false"})  ;
+
+position token PBreak ({"break"}) ;
+position token PContinue ({"continue"}) ;
+
+position token PWriteInt ({"writeInt"}) ;
+position token PWriteFloat ({"writeFloat"}) ;
+position token PWriteChar ({"writeChar"}) ;
+position token PWriteString ({"writeString"}) ;
+
+position token PReadInt ({"readInt"}) ;
+position token PReadFloat ({"readFloat"}) ;
+position token PReadChar ({"readChar"}) ;
+position token PReadString ({"readString"}) ;

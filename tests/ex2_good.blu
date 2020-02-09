@@ -1,0 +1,49 @@
+const
+	x : string := "test" ;
+	y : Array <Array <int> ()> () := [[1],[]] ;
+end const
+
+var
+	n : real := 3.0 ;
+	m : char := 'y' ;
+	l : char ;
+	w : int ;
+end var
+
+routines
+	funct (n : int) -> (k : real) is
+		do
+			label a:
+			l := readChar();
+			if ( l = m ) then
+				goto a;
+			elseif( readInt() = w ) then
+				funct(5);
+			else
+				do
+					break;
+				while(true)
+			end if
+	end funct
+
+	main is
+		const
+			i : string := "ok" ;
+		end const
+
+		var
+			j : Array <real> (5) ;
+		end var
+
+		routines
+			g () -> () is
+			do
+				writeString(x);
+			end g
+		end routines
+
+		do
+			g();
+	end main
+
+end routines

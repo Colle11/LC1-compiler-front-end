@@ -1,0 +1,27 @@
+const
+    a : int := 1;
+end const
+
+var
+    q : Array < Array <char> () > ()  := [['h','e','l','l','o'],
+                                          ['w','o','r',true,'d']];
+end var
+
+routines
+    main is
+    var
+      i : int ;
+      j : int ;
+    end var
+      do
+        for (i := 0,i < 2, i:=i+1)
+        do
+              for (j := 0,j < "not", j:=j+1)
+              do
+                    writeChar (q[i][j]);
+              end for
+        end for
+        writeChar('\n');
+    end funct
+
+end routines

@@ -1,0 +1,24 @@
+const
+	a : real := 1 ;
+end const
+
+var
+	b : bool := true ;
+	c : string ;
+end var
+
+routines
+	main is
+		const
+			d : int := 5 ;
+		end const
+
+		var
+			e : char := 'c' ;
+			f : real ;
+		end var
+
+		do
+			f := a + d ;
+		end main
+end routines
